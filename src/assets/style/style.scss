@@ -1,0 +1,9 @@
+@import './_fonts.scss';
+body{
+	background-color: yellow;
+	color: green;
+	font-size:  300px;
+	display: flex;
+}
+
+@import './_media.scss';
