@@ -1,0 +1,15 @@
+.button{
+	display: inline-block;
+	height: 18px;
+	max-width: 24px;
+	padding: 2px;
+	text-align: center;
+	position: relative;
+	color: rgba(0,0,0,.7);
+	font-size: 18px;
+	transition: background-color .2s ease-in ;
+	&:hover{
+		cursor: pointer;
+		background-color: rgba(0,0,0,.1);
+	}
+}
