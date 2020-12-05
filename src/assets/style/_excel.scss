@@ -1,0 +1,88 @@
+.excel{
+	position: relative;
+	height: 100%;
+	max-width: 100%;
+	font-size: .8rem;
+	&__header{
+		box-sizing: border-box;
+		padding: 6px 4px;
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+		border-bottom: 1px solid silver;
+		align-items: center;
+		input{
+			padding: 2px 7px;
+			background-color: inherit;
+			min-width: 1px;
+			color: #000;
+			height: 20px;
+			border: 1px solid transparent;
+			font-size: 18px;
+			line-height: 18px;
+			outline: none;
+		}
+		>div{
+			padding-right: 5px;
+			.button{
+				height: 18px;
+				width: 18px;
+			}
+		}
+	}
+	&__toolbar{
+		padding: 5px 10px;
+		border-bottom: 1px solid silver;
+	}
+	&__formula{
+		border-bottom: 1px solid silver;
+		&-info{
+			font-style: italic;
+			font-size: 18px;
+			text-align: center;
+			min-width: 40px;
+			border-right: 1px solid silver;
+			display: inline-block;
+			color: #888;
+			padding-bottom: 2px;
+		}
+	}
+	&__table{
+		overflow-x: scroll;
+		&-row{
+			border-bottom: 1px solid silver;
+			display: flex;
+		};
+		&-info{
+			min-width: 40px;
+			display: inline-block;
+			border-right: 1px solid silver;
+			background-color: #f8f9fa;
+			color: rgb(#000, .5);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		};
+		&-data{
+			display: flex;
+		}
+		&-column{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: #f8f9fa;
+			min-width: 40px;
+			width: 120px;
+			border-right: 1px solid silver;
+			min-height: 20px;
+			font-size: 12px;
+			&-symbol{
+				color: rgb(#000, .5);
+			}
+			&-cell{
+				width: 100%;
+				padding: 2px 5px;
+			}
+		}
+	}
+}

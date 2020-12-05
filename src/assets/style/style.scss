@@ -1,9 +1,12 @@
 @import './_fonts.scss';
-body{
-	background-color: yellow;
-	color: green;
-	font-size:  300px;
-	display: flex;
+
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
+@import './_button.scss';
+@import './_excel.scss';
+@import './db.scss';
 @import './_media.scss';
