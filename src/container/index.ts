@@ -1,0 +1,1 @@
+export { default as GatherTable } from './GatherTable/index';
