@@ -23,9 +23,9 @@
 			outline: none;
 		}
 		>div{
-			padding-right: 5px;
+			padding-right: 15px;
 			.button{
-				height: 18px;
+				height: 100%;
 				width: 18px;
 			}
 		}
@@ -33,9 +33,16 @@
 	&__toolbar{
 		padding: 5px 10px;
 		border-bottom: 1px solid silver;
+		>.button{
+			height: 100%;
+			display: inline-block;
+			min-width: 30px;
+		}
 	}
 	&__formula{
 		border-bottom: 1px solid silver;
+		display: flex;
+		align-items: center;
 		&-info{
 			font-style: italic;
 			font-size: 18px;
@@ -45,6 +52,17 @@
 			display: inline-block;
 			color: #888;
 			padding-bottom: 2px;
+		}
+		&-wrap{
+			min-width: 95%;
+		};
+		&-input{
+			margin: 0 10px;
+			min-width: 30px;
+			font-size: 16px;
+			border: none;
+			max-width: 95%;
+			outline: none;
 		}
 	}
 	&__table{
