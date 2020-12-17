@@ -5,13 +5,13 @@ import { utility } from '../../core/utility';
 class Excel extends DomListener{
 	baseElement: HTMLElement ;
 	components: Array<object>;
-	constructor(props:{ selector: string, components:  Array<object> }){
+	constructor(props:{ selector: string, components:  Array<object>,}){
 		super(props)
 		this.baseElement = document.getElementById(props.selector)
 		this.components = props.components;
 	}
 
-	initAction(){
+	initAction = () => {
 		this.components.forEach( (compon: any): void => {
 			if( compon.getListener() !== undefined ){
 				compon.getListener().forEach(( el: string ) => {
@@ -39,7 +39,7 @@ class Excel extends DomListener{
 	render(){
 		const area: HTMLElement = createHTML("main",{ name: "class", val: "excel" })
 		this.components = this.components.map( ( el : any )  => {
-			let obj = new el({html: HTMLElement})
+			let obj = new el({html: HTMLElement, initAction: this.initAction, delListenenr: this.delListenenr })
 			if(obj instanceof Object) area.appendChild(obj.toHTML())
 			return obj
 		} )
