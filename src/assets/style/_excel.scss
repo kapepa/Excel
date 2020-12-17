@@ -70,9 +70,11 @@
 		&-row{
 			border-bottom: 1px solid silver;
 			display: flex;
+			min-height: 25px
 		};
 		&-info{
 			min-width: 40px;
+			min-height: 28px;
 			display: inline-block;
 			border-right: 1px solid silver;
 			background-color: #f8f9fa;
@@ -80,6 +82,22 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			position: relative;
+			&>div + div{
+				left: 0;
+				height: 3px;
+				right: 0;
+				bottom: -2px;
+				cursor: ns-resize;
+				&::after{
+					content: "";
+					display: block;
+					top: 10px;
+					height: 5px;
+					width: 100%;
+					background-color: transparent;
+				}
+			}
 		};
 		&-data{
 			display: flex;
@@ -94,12 +112,38 @@
 			border-right: 1px solid silver;
 			min-height: 20px;
 			font-size: 12px;
+			position: relative;
 			&-symbol{
 				color: rgb(#000, .5);
 			}
 			&-cell{
 				width: 100%;
 				padding: 2px 5px;
+				min-height: 100%;
+			}
+			&>div + div {
+				top: 0;
+				width: 3px;
+				right: 0;
+				bottom: 0;
+				cursor: ew-resize;
+				&::before{
+					content: "";
+					display: block;
+					height: 100%;
+					width: 7px;
+					background-color: transparent;
+				}
+			}
+		}
+		&-resize {
+			opacity: 0;
+			position: absolute;
+			transition: opacity .25s linear;
+			background-color: brown;
+			z-index: 100;
+			&:hover{
+				opacity: 1;
 			}
 		}
 	}

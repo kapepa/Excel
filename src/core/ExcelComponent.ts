@@ -13,6 +13,22 @@ class ExcelComponent implements excelInterface {
 	getListener(){
 		return this.listener
 	}
+	setListener(name: string): void{
+		this.listener.push(name)
+	}
+	css(htmlEL: HTMLElement, style: object){
+		let newCss: string = Object.entries(style).map(merge).join(';');
+		htmlEL.style.cssText = newCss;
+		function merge(el: any) {
+			return `${el[0]}:${el[1]}`;
+		}
+	}
+	removeListener(name: string): void{
+		let dublicate: Array<string> = [...this.listener];
+		let findindex = dublicate.findIndex((el: string) => el === name )
+		dublicate.splice(findindex,1);
+		this.listener = dublicate;
+	}
 	appendHTML(obj: { tag: string, className: string, content: string }){
 		this.html = this.createHTML( obj.tag ,{ name: "class", val: obj.className } );
 		this.html.insertAdjacentHTML("beforeend", obj.content);
