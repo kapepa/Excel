@@ -1,11 +1,20 @@
 import { createHTML } from "./createHTML";
+import { utility } from '../core/utility';
 
-class ExcelComponent implements excelInterface {
+class ExcelComponent {
 	html: HTMLElement;
-	listener: Array<string> | undefined
-	constructor(props: { html?: HTMLElement, listener?: Array<string> }) {
+	listener: Array<string> | undefined;
+	callbackArr: Array<Function | undefined>;
+	initListener: Function;
+	className: any;
+	emmit: any;
+	subscribe: any;
+	constructor(props: {emmiter: any, html?: HTMLElement, listener?: Array<string>, initListener: Function }) {
 		this.listener = props ? props.listener : [];
 		this.html = props.html;
+		this.initListener = props.initListener;
+		this.emmit = props.emmiter.emmit;
+		this.subscribe = props.emmiter.subscribe;
 	}
 	createHTML(tage: string, attr: { name: string, val: string }){
 		return createHTML( tage, attr )
@@ -34,10 +43,18 @@ class ExcelComponent implements excelInterface {
 		this.html.insertAdjacentHTML("beforeend", obj.content);
 		return this.html;
 	}
-}
-
-interface excelInterface {
-	// html: string;
+	init(){
+		let th: any = this;
+		if( !this.listener ) return;
+		th.listener.forEach((el:string) => {
+			let receiveMethod = utility.onTransform(el)
+			if(receiveMethod in th){
+				th.initListener(th.html, el, th[receiveMethod])
+			}else{
+				throw new Error(`error in component ${th.className}, necessary add method ${el}`)
+			}
+		})
+	}
 }
 
 export default ExcelComponent 

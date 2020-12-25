@@ -5,7 +5,7 @@ interface codeType {
 
 function charHeader(length: number, begin: number): string {
 	let cell = new Array(length).fill("").map( (el: string, index: number) => {
-		return `<div class="excel__table-column" draggable="false"  data-resize="col" data-pos=${String.fromCharCode(index + begin)} ><div class="excel__table-column-symbol" draggable="false">${String.fromCharCode(index + begin)}</div><div class="excel__table-resize" data-pointer="true"></div></div>`
+		return `<div class="excel__table-column" draggable="false"  data-resize="col" data-pos=${index} ><div class="excel__table-column-symbol" draggable="false">${String.fromCharCode(index + begin)}</div><div class="excel__table-resize" data-pointer="true"></div></div>`
 	});
 	return `<div class="excel__table-row"><div class="excel__table-info"></div><div class="excel__table-data">${cell.join("")}</div></div>`
 }
@@ -13,8 +13,8 @@ function charHeader(length: number, begin: number): string {
 function bodyRows(length: number, row: number, begin: number): string {
 	let creareRow = new Array(row).fill("").map((el:any, index: number) => {
 		let numericableRow = `<div class="excel__table-info" data-resize="row"><div class="excel__table-column-symbol">${index + 1}</div><div class="excel__table-resize" data-pointer="true"></div></div>`;
-		let cellRow = new Array(length).fill("").map(( el: string, index: number ) => {
-			return `<div class="excel__table-column" data-pos=${String.fromCharCode(begin + index)}><div class="excel__table-column-cell" contenteditable = "true"></div></div>`
+		let cellRow = new Array(length).fill("").map(( el: string, digit: number ) => {
+			return `<div class="excel__table-column" data-line=${index} data-pos=${digit}><div class="excel__table-column-cell" contenteditable = "true"></div></div>`
 		}) 
 		return `<div class="excel__table-row">${numericableRow} <div class="excel__table-data">${cellRow.join("")}</div></div>`
 	})

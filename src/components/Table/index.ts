@@ -1,24 +1,45 @@
 import ExcelComponent from '../../core/ExcelComponent';
-import { GatherTable } from '../../container/index';
+import { GatherTable, SelectTable } from '../../container/index';
 
 class Table extends ExcelComponent {
 	baseElem: HTMLElement | null
 	initAction: Function;
 	delListenenr: Function;
+	initListener: Function
 	postLoader: Array< undefined | any > | any = [];
 	curentColumn: string;
 	runPointer: HTMLElement | null;
 	cordinateMove: number;
 	direction: string;
-	constructor(props: { html: HTMLElement, initAction: Function, delListenenr: Function } ){
-		super({...props, listener: ["mousedown", "mouseup"]});
+	select: any;
+	constructor(props: {emmiter: any, initAction: Function, delListenenr: Function, initListener: Function } ){
+		super({...props, listener: ["mousedown", "mouseup", "click", "keydown"]});
 		this.initAction = props.initAction;
-		this.delListenenr = props.delListenenr
+		this.delListenenr = props.delListenenr;
 		this.baseElem = null;
 		this.postLoader = [];
 		this.runPointer = null;
 		this.cordinateMove = 0
 		this.direction = ""
+		this.select = {};
+	}
+
+	readonly className : string = "excel__table";
+
+	onKeydown = (e:Event) => {
+		let event: any = e;
+		let keyList: Array<string> = ["ArrowRight","ArrowLeft","ArrowDown","ArrowUp"]
+		if ((event.key === "Enter" && !event.shiftKey) || keyList.includes(event.key)) event.preventDefault();
+		if (!(event.key === "Enter" &&  event.shiftKey)) this.select.actionKey(event.key);
+	};
+	onClick = (e:any) => {
+		let event = e.target;
+		let element = event.closest(`[data-line][data-pos]`)
+		if(event.closest(`[data-line][data-pos]`) && e.ctrlKey !== true){
+			this.select.selectOne(parseInt(element.dataset.line),parseInt(element.dataset.pos))
+		}else if(event.closest(`[data-line][data-pos]`) && e.ctrlKey){
+			this.select.selectMany(parseInt(element.dataset.line),parseInt(element.dataset.pos))
+		}
 	}
 
 	onMousedown = (e: Event ) => {
@@ -26,7 +47,7 @@ class Table extends ExcelComponent {
 		let discoverData: any = resizeEvent.closest("[data-resize]");
 		if (resizeEvent.dataset.pointer && discoverData.dataset.resize !== undefined && resizeEvent.dataset.pointer){
 			if(discoverData.dataset.pos){
-				this.postLoader = Array.from(document.querySelectorAll(`[data-pos=${discoverData.dataset.pos}]`));
+				this.postLoader = Array.from(document.querySelectorAll(`[data-pos="${discoverData.dataset.pos}"]`));
 				this.cordinateMove = parseInt(window.getComputedStyle(discoverData).width);
 			}else if(discoverData.dataset.pos === undefined){
 				this.postLoader = discoverData
@@ -71,10 +92,25 @@ class Table extends ExcelComponent {
 		arr.forEach((el:HTMLElement): void => {this.css(el,{width: `${size}px`})});
 	}
 
-	private className : string = "excel__table";
+	changeCell(){
+		this.select = new SelectTable({emmit: this.emmit, subscribe: this.subscribe});
+	}
+
+	init(){
+		super.init();
+		this.select.selectOne();
+		this.subscribe("formulaInput", this.writable);
+	}
+
+	writable = (data: string) => {
+		this.select.curretnElem.querySelector(`[contenteditable]`).innerHTML = data;
+	}
+	
 	toHTML(){
-		let content = GatherTable(15)
-		return super.appendHTML({tag: "section", className: this.className, content});
+		let content = GatherTable(10)
+		let appendHTML = super.appendHTML({tag: "section", className: this.className, content});
+		this.changeCell();
+		return appendHTML;
 	}
 }
 
