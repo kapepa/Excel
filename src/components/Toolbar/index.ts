@@ -1,10 +1,10 @@
 import ExcelComponent from '../../core/ExcelComponent';
 
 class Toolbar extends ExcelComponent {
-	constructor(props: { html: string } ){
+	constructor(props: {emmiter: any, initAction: Function, delListenenr: Function, initListener: Function } ){
 		super(props);
 	}
-	private className : string = "excel__toolbar";
+	readonly className : string = "excel__toolbar";
 	toHTML(){
 		let content: string = `
 			<div class="button material-icons">

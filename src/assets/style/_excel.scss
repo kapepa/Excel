@@ -63,6 +63,14 @@
 			border: none;
 			max-width: 95%;
 			outline: none;
+			white-space: nowrap!important;
+			display: flex;
+			flex-direction: row;
+			word-spacing: 3px;
+			&>div{
+				padding-left: 7px;
+			}
+
 		}
 	}
 	&__table{
@@ -93,7 +101,7 @@
 					content: "";
 					display: block;
 					top: 10px;
-					height: 5px;
+					height: 4px;
 					width: 100%;
 					background-color: transparent;
 				}
@@ -120,6 +128,8 @@
 				width: 100%;
 				padding: 2px 5px;
 				min-height: 100%;
+				line-height: 1.7;
+				outline: none;
 			}
 			&>div + div {
 				top: 0;
@@ -140,11 +150,17 @@
 			opacity: 0;
 			position: absolute;
 			transition: opacity .25s linear;
-			background-color: brown;
+			background-color: #3c74ff;
 			z-index: 100;
 			&:hover{
 				opacity: 1;
 			}
 		}
 	}
+}
+
+.active-cell{
+	border: 2px #3c74ff solid;
+	border-radius: 4px;
+	outline: none;
 }

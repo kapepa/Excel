@@ -1,10 +1,10 @@
 import ExcelComponent from '../../core/ExcelComponent';
 
 class Header extends ExcelComponent {
-	constructor(props: { html: string } ){
+	constructor(props: {emmiter: any, initAction: Function, delListenenr: Function, initListener: Function } ){
 		super(props)
 	}
-	private className : string = "excel__header"
+	readonly  className : string = "excel__header"
 	toHTML(){
 		let content: string = `
 			<input type="text" value="Новая таблица">
