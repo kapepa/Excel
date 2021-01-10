@@ -37,6 +37,9 @@
 			height: 100%;
 			display: inline-block;
 			min-width: 30px;
+			&.toolActive{
+				background-color: rgba(0,0,0,.1);
+			}
 		}
 	}
 	&__formula{
@@ -130,6 +133,8 @@
 				min-height: 100%;
 				line-height: 1.7;
 				outline: none;
+				border: 2px transparent solid;
+				border-radius: 4px;
 			}
 			&>div + div {
 				top: 0;
@@ -160,7 +165,8 @@
 }
 
 .active-cell{
-	border: 2px #3c74ff solid;
-	border-radius: 4px;
-	outline: none;
+	.excel__table-column-cell{
+		border: 2px #3c74ff solid;
+		outline: none;
+	}
 }

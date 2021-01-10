@@ -1,5 +1,8 @@
 import ExcelComponent from '../../core/ExcelComponent';
 import { GatherTable, SelectTable } from '../../container/index';
+import { writeContentFormula } from '../../redux/variables'
+import { utility } from '../../core/utility';
+import { actionTable } from '../../redux/action/index'
 
 class Table extends ExcelComponent {
 	baseElem: HTMLElement | null
@@ -12,8 +15,10 @@ class Table extends ExcelComponent {
 	cordinateMove: number;
 	direction: string;
 	select: any;
-	constructor(props: {emmiter: any, initAction: Function, delListenenr: Function, initListener: Function } ){
-		super({...props, listener: ["mousedown", "mouseup", "click", "keydown"]});
+	setActiveEl: any;
+	timeOut: any;
+	constructor(props: {getActiveEl: Function ,setActiveEl: Function, emmiter: any, initAction: Function, delListenenr: Function, initListener: Function, store: any, action: Object, getlocalStorage: any, stateApp: any } ){
+		super({...props, listener: ["mousedown", "mouseup", "click", "keyup"]});
 		this.initAction = props.initAction;
 		this.delListenenr = props.delListenenr;
 		this.baseElem = null;
@@ -22,15 +27,21 @@ class Table extends ExcelComponent {
 		this.cordinateMove = 0
 		this.direction = ""
 		this.select = {};
+		this.setActiveEl = props.setActiveEl;
+		this.timeOut = undefined;
 	}
 
 	readonly className : string = "excel__table";
 
-	onKeydown = (e:Event) => {
+	onKeyup = (e:Event) => {
 		let event: any = e;
 		let keyList: Array<string> = ["ArrowRight","ArrowLeft","ArrowDown","ArrowUp"]
 		if ((event.key === "Enter" && !event.shiftKey) || keyList.includes(event.key)) event.preventDefault();
-		if (!(event.key === "Enter" &&  event.shiftKey)) this.select.actionKey(event.key);
+		if (!(event.key === "Enter" &&  event.shiftKey)){
+			let currentElem: any = event.target;
+			this.select.actionKey(event.key);
+			this.commonSaveContent(currentElem);
+		}
 	};
 	onClick = (e:any) => {
 		let event = e.target;
@@ -77,11 +88,21 @@ class Table extends ExcelComponent {
 			this.removeListener("mousemove");
 			this.delListenenr(this.html, "mousemove", this.onMousemove);
 			if(this.direction === "col"){
+				this.dispatch(this.action.table.establishCol({direction: this.direction, size: this.cordinateMove, pos: this.baseElem.dataset.pos, getlocalStorage: this.getlocalStorage}))
 				this.css(this.runPointer, {right: `0px`})
 				this.postLoader.forEach( (el: HTMLElement) => {
-					this.css(el,{width: `${this.cordinateMove}px`})
+					let refreshStyle: any = {};
+					let oldStyle = el.getAttribute("style").trim();
+					let cropLast = oldStyle.substring(0,oldStyle.length -1)
+					cropLast.split(';').forEach( (el:any) =>{
+						let [name, val] = el.split(":")
+						if(name !== "width" && name !== undefined && val !== undefined) refreshStyle[name] = val;
+					});
+					let associztion = Object.assign(refreshStyle,{width: `${this.cordinateMove}px`})
+					this.css(el,associztion)
 				})
 			}else if (this.direction === "row"){
+				this.dispatch(this.action.table.establishCol({direction: this.direction, size: this.cordinateMove, pos: this.baseElem.dataset.row, getlocalStorage: this.getlocalStorage}))
 				this.css(this.runPointer, {right: `0px`});
 				this.css(this.postLoader, {height: `${this.cordinateMove}px`});
 			}
@@ -93,21 +114,39 @@ class Table extends ExcelComponent {
 	}
 
 	changeCell(){
-		this.select = new SelectTable({emmit: this.emmit, subscribe: this.subscribe});
+		this.select = new SelectTable({dispatch: this.dispatch.bind(this), subscribe: this.subscribers, setActiveEl: this.setActiveEl});
 	}
 
 	init(){
 		super.init();
 		this.select.selectOne();
-		this.subscribe("formulaInput", this.writable);
+		this.subscribers(writeContentFormula, this.writable)
 	}
 
 	writable = (data: string) => {
-		this.select.curretnElem.querySelector(`[contenteditable]`).innerHTML = data;
+		let el = this.select.curretnElem.querySelector(`[contenteditable]`);
+		if(document.activeElement !== el){
+			el.innerHTML = data;
+			this.commonSaveContent(el);
+		}
+	}
+
+	commonSaveContent(elem: any){
+		let baseElem: HTMLElement = elem.closest(`[data-line][data-pos]`);
+		let {line, pos} = baseElem.dataset;
+		if(this.timeOut)window.clearTimeout(this.timeOut);
+		if(baseElem.textContent.startsWith("=")){
+			this.timeOut = window.setTimeout(() => {
+				let res = utility.calculate(elem, elem.textContent);
+				this.dispatch(actionTable.writeContentCell({content: res ,line, pos, getlocalStorage: this.getlocalStorage}));
+			},5000);
+		}
+		this.dispatch(actionTable.writeContentCell({content: elem.textContent ,line, pos, getlocalStorage: this.getlocalStorage}));
 	}
 	
 	toHTML(){
-		let content = GatherTable(10)
+		let preverve = this.getlocalStorage
+		let content = GatherTable(10,preverve)
 		let appendHTML = super.appendHTML({tag: "section", className: this.className, content});
 		this.changeCell();
 		return appendHTML;

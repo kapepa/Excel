@@ -1,25 +1,38 @@
 import { createHTML } from '../../core/createHTML';
+import { StateApp } from '../../core/stateApp';
 import { DomListener } from  '../../core/DomListener';
 import { utility } from '../../core/utility';
-import  Emmiter  from '../../core/Emitter';
+import { actionTable } from '../../redux/action/index';
 
 class Excel extends DomListener{
 	baseElement: HTMLElement ;
 	components: Array<object>;
-	emmiter: undefined | Object;
-	constructor(props:{ selector: string, components:  Array<object>,}){
+	store: any;
+	action: Object;
+	getlocalStorage: any;
+	stateApp: any;
+	componentName: any;
+	area: any;
+	markup: any;
+	constructor(props:{ selector: string, components:  Array<object>, store: any, getlocalStorage: any}){
 		super(props)
 		this.baseElement = document.getElementById(props.selector)
 		this.components = props.components;
-		this.emmiter = undefined;
+		this.componentName = undefined;
+		this.store = props.store
+		this.action = {table: actionTable};
+		this.getlocalStorage = props.getlocalStorage || {};
+		this.stateApp = new StateApp(this);
+		this.area = undefined;
+		this.markup = {};
 	}
 
 	initAction = () => {
-		this.components.forEach( (compon: any): void => {compon.init()})
+		this.componentName.forEach( (compon: any): void => {compon.init()});
 	}
 	
 	delAction = () => {
-		this.components.forEach( (compon: any): void => {
+		this.componentName.forEach( (compon: any): void => {
 			if( compon.getListener() !== undefined ){
 				compon.getListener().forEach(( el:string ) => {
 					let receiveMethod = utility.onTransform(el)
@@ -29,19 +42,20 @@ class Excel extends DomListener{
 		})
 	}
 
-	initEmmiter(){
-		this.emmiter = new Emmiter();
-	}
-	
 	render(){
-		const area: HTMLElement = createHTML("main",{ name: "class", val: "excel" })
-		this.initEmmiter()
-		this.components = this.components.map( ( el : any )  => {
-			let obj = new el({emmiter: this.emmiter, initAction: this.initAction, delListenenr: this.delListenenr, initListener: this.initListener })
-			if(obj instanceof Object) area.appendChild(obj.toHTML())
+		if(this.area === undefined) this.area = createHTML("main",{ name: "class", val: "excel" });
+		this.componentName = this.components.map( ( el : any )  => {
+			let obj = new el({getActiveEl: this.getActiveEl,setActiveEl: this.setActiveEl ,initAction: this.initAction, delListenenr: this.delListenenr, initListener: this.initListener, store: this.store,action: this.action, getlocalStorage: this.getlocalStorage, stateApp: this.stateApp})
+			let html = obj.toHTML();
+			if(this.markup[el.name] !== undefined && JSON.stringify(this.markup[el.name].innerHTML) !== JSON.stringify(html.innerHTML)){
+				this.markup[el.name].innerHTML = html.innerHTML;
+			}else if(this.markup[el.name] === undefined){
+				if(obj instanceof Object) this.area.appendChild(html);
+				this.markup[el.name] = html
+			}
 			return obj
 		} )
-		this.baseElement.appendChild(area);
+		this.baseElement.appendChild(this.area);
 		return this
 	}
 }
