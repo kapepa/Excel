@@ -1,18 +1,20 @@
-import { ChatOutlined } from "../../../node_modules/@material-ui/icons/index";
 import { utility } from "../../core/utility";
+import { actionFormula, toolBarAction } from '../../redux/action/index';
 
 class SelectTable {
 	curretnElem: any | null;
 	listElem: Array<any> | undefined;
-	emmit: Function;
+	dispatch: Function;
 	subscribe: Function;
+	setActiveEl: Function;
 	private active: string ;
-	constructor(props: {emmit: Function, subscribe: Function}){
+	constructor(props: {dispatch: Function, subscribe: Function, setActiveEl: Function}){
 		this.subscribe = props.subscribe;
-		this.emmit = props.emmit;
+		this.dispatch = props.dispatch;
 		this.curretnElem = null;
-		this.listElem = new Array()
-		this.active = "active-cell"
+		this.listElem = new Array();
+		this.active = "active-cell";
+		this.setActiveEl = props.setActiveEl;
 	}
 
 	actionKey(action: string){
@@ -27,7 +29,8 @@ class SelectTable {
 	}
 
 	selectOne = (line: number = 0, pos: number = 0) => {
-		let element = document.querySelectorAll(`[data-line="${line}"][data-pos="${pos}"]`)[0];	
+		let element = document.querySelectorAll(`[data-line="${line}"][data-pos="${pos}"]`)[0];
+		let cellStyle = element.getAttribute("style");
 		if(element){
 			this.curretnElem = element;
 			let content = this.curretnElem.querySelector("[contenteditable]")
@@ -43,20 +46,27 @@ class SelectTable {
 			sel.removeAllRanges()
 			sel.addRange(range);
 
-			this.emmit("changeCell", content.innerHTML)
+			this.setActiveEl(element)
+			this.dispatch(actionFormula.formulaInput(content.textContent))
+			this.dispatch(toolBarAction.currentStyle(cellStyle))
 		}
 	}
 
 	selectMany = (line: number, pos: number) => {
+		let acticeCell = new Array();
 		let basePosition: any = this.curretnElem.dataset;
 		let currLine: Array<number> = utility.rangeSelect( parseInt(basePosition.line), line );
 		let currPos: Array<number> = utility.rangeSelect( parseInt(basePosition.pos), pos );
 
 		for(let key of currLine){
 			for(let val of currPos){
-				document.querySelector(`[data-line="${key}"][data-pos="${val}"]`).classList.add(this.active);
+				let assets = document.querySelector(`[data-line="${key}"][data-pos="${val}"]`);
+				assets.classList.add(this.active);
+				acticeCell.push(assets)
 			}
 		}
+		this.setActiveEl(acticeCell)
+		this.dispatch(toolBarAction.currentStyle(""));
 	}
 }
 

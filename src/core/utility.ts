@@ -27,6 +27,17 @@ let utility = {
 			break;
 		};
 		return {line, pos};
+	},
+	createButton(arg:any){
+		return `<div class="button material-icons" data-css='${arg.style}'>${arg.name}</div>`
+	},
+	calculate(elem:HTMLElement, string: string){
+		let calc = string.substr(1,string.length);
+		let doCalc = eval(calc);
+		if(doCalc){
+			elem.textContent = doCalc;
+			return doCalc.toString()
+		}
 	}
 }
 
