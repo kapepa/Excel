@@ -1,5 +1,5 @@
 export function CreateStore(rootReducer: Function, initialsState?: any) {
-	let state: any = initialsState || {col:{}, row:{}, content: {}, allStyle: {}};
+	let state: any = initialsState || {title: "Новая таблица", col:{}, row:{}, content: {}, allStyle: {}, cordinate: {line: 0, pos: 0}};
 	let listener: Array<{name: String, fnc: Function}> = [];
 
 	return {
@@ -23,7 +23,7 @@ export function CreateStore(rootReducer: Function, initialsState?: any) {
 					});
 				};
 			});
-			localStorage.setItem(window.location.origin, JSON.stringify(state));
+			window.localStorage.setItem(window.location.href, JSON.stringify(state));
 		},
 		getState(){
 			return state

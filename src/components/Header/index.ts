@@ -2,10 +2,26 @@ import ExcelComponent from '../../core/ExcelComponent';
 import { actionHeader } from '../../redux/action/index';
 
 class Header extends ExcelComponent {
-	constructor(props: {initAction: Function, delListenenr: Function, initListener: Function, store: any, action: Object, getlocalStorage: any, stateApp: any  } ){
-		super({...props, listener: ["input"]});
+	router: any;
+	constructor(props: {initAction: Function, delListenenr: Function, initListener: Function, store: any, action: Object, getlocalStorage: any, stateApp: any, router: any } ){
+		super({...props, listener: ["input","click"]});
+		this.router = props.router;
 	}
 	readonly  className : string = "excel__header";
+
+	onClick = (e:Event) => {
+		let target: any = e.target;
+		if(target.classList.contains("material-icons")){
+			let btn = target.textContent.trim();
+			if(btn === "delete"){
+				let storeName = this.router.href();
+				window.localStorage.removeItem(storeName);
+				this.router.url("");
+			}else if(btn === "exit_to_app"){
+				this.router.url("");
+			}
+		}
+	}
 
 	onInput = (e:any) => {
 		this.dispatch(actionHeader.headerTitle(e.target.value))
