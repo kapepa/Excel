@@ -1,14 +1,12 @@
 import './assets/js/common.js';
 import './assets/style/style.scss';
-import 'material-design-icons'
-import './App';
-import { Header, Toolbar, Formula, Table, Excel } from './components/index';
-import { CreateStore } from './core/createStore';
-import { rootReducer } from './redux/rootReducer';
+import 'material-design-icons';
+import Router from "../src/core/router/router";
+import DashBoardPage from "../src/page/dashboard";
+import ExcelPage from '../src/page/excel';
 
-let getlocalStorage = JSON.parse(window.localStorage.getItem(window.location.origin));
-let store = CreateStore(rootReducer, getlocalStorage);
-let excel = new Excel({selector: "app", components: [Header, Toolbar, Formula, Table], store, getlocalStorage});
-excel.render().initAction();
+let router = new Router("#app",{dashboard: DashBoardPage, excel: ExcelPage});
+
+
 
 

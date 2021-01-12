@@ -14,9 +14,9 @@ class Excel extends DomListener{
 	componentName: any;
 	area: any;
 	markup: any;
-	constructor(props:{ selector: string, components:  Array<object>, store: any, getlocalStorage: any}){
+	router: any;
+	constructor(props:{components:  Array<object>, store: any, getlocalStorage: any, router: any}){
 		super(props)
-		this.baseElement = document.getElementById(props.selector)
 		this.components = props.components;
 		this.componentName = undefined;
 		this.store = props.store
@@ -25,6 +25,7 @@ class Excel extends DomListener{
 		this.stateApp = new StateApp(this);
 		this.area = undefined;
 		this.markup = {};
+		this.router = props.router
 	}
 
 	initAction = () => {
@@ -45,7 +46,7 @@ class Excel extends DomListener{
 	render(){
 		if(this.area === undefined) this.area = createHTML("main",{ name: "class", val: "excel" });
 		this.componentName = this.components.map( ( el : any )  => {
-			let obj = new el({getActiveEl: this.getActiveEl,setActiveEl: this.setActiveEl ,initAction: this.initAction, delListenenr: this.delListenenr, initListener: this.initListener, store: this.store,action: this.action, getlocalStorage: this.getlocalStorage, stateApp: this.stateApp})
+			let obj = new el({getActiveEl: this.getActiveEl,setActiveEl: this.setActiveEl ,initAction: this.initAction, delListenenr: this.delListenenr, initListener: this.initListener, store: this.store,action: this.action, getlocalStorage: this.getlocalStorage, stateApp: this.stateApp, router: this.router})
 			let html = obj.toHTML();
 			if(this.markup[el.name] !== undefined && JSON.stringify(this.markup[el.name].innerHTML) !== JSON.stringify(html.innerHTML)){
 				this.markup[el.name].innerHTML = html.innerHTML;
@@ -55,8 +56,7 @@ class Excel extends DomListener{
 			}
 			return obj
 		} )
-		this.baseElement.appendChild(this.area);
-		return this
+		return this.area
 	}
 }
 

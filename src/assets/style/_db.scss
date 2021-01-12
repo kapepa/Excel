@@ -64,6 +64,9 @@
 					text-decoration: none;
 					color: #202124;
 					font-size: 14px;
+					width: 100%;
+					display: flex;
+					justify-content: space-between;
 				}
 				&:hover{
 					background-color: #e6f4ea;

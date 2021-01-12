@@ -38,6 +38,29 @@ let utility = {
 			elem.textContent = doCalc;
 			return doCalc.toString()
 		}
+	},
+	listTable(){
+		let tableList = []
+		for (var i = 0; i < localStorage.length; i++) {
+			let url = window.location.origin;
+			if(localStorage.key(i).includes(url)){
+				let key = localStorage.key(i)
+				let table = JSON.parse(window.localStorage.getItem(key));
+				tableList.push({key: key.slice(url.length),title: table.title})
+			};
+		}
+		return tableList.map((el:{key: string, title:string})=>{
+			let explod = el.key.split("/");
+			let date = new Date(parseInt(explod[explod.length -1]));
+			return `
+				<li class="db__table-list-record">
+					<a href="${el.key}">
+						<span>${el.title}</span>
+						<strong>${date.getDay()}.${date.getMonth() < 10 ? ""+ date.getMonth() + 1 : date.getMonth() + 1 }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}</strong>
+					</a>	
+				</li>
+			`
+		})
 	}
 }
 
